@@ -1,5 +1,7 @@
 from tkinter import *
 from Box import Box
+import random
+import Solver
 
 window = None
 canvas = None
@@ -9,19 +11,17 @@ boxSize = 50
 
 boxes = []
 
+
 def findBoxByCoords(row, col):
     for box in boxes:
         if(box.row == row and box.col == col):
             return box
-    
+
     return None
-
-def fillStartingNumbers():
-    
-
 
 
 def boxClicked(event):
+
     num = canvas.find_withtag(CURRENT)[0]
     # print(num)
     res = 0
@@ -32,8 +32,32 @@ def boxClicked(event):
         res = num - 2
 
     res = int(res / 2)
-    
-    print(res)
+
+    box = boxes[res]
+    # print(box)
+
+    box.increase()
+
+    if(temp == 1):
+        num += 1
+
+    if(box.num == 0):
+        canvas.itemconfig(num, text="")
+    else:
+        canvas.itemconfig(num, text=str(box.num))
+
+    createPuzzleArray()
+
+
+def createPuzzleArray():
+    arr = [[0 for x in range(9)] for y in range(9)]
+
+    for i in range(9):
+        for k in range(9):
+            arr[k][i] = boxes[(i * 9) + k].num
+
+    Solver.printArray(arr)
+
 
 def setupWindow():
     global canvas, boxes, window
@@ -46,16 +70,16 @@ def setupWindow():
 
     for row in range(0, 9):
         for col in range(0, 9):
+            rand = random.randint(1, 9)
+
             rect = canvas.create_rectangle(row * boxSize, col * boxSize, (row + 1)
                                            * boxSize, (col + 1) * boxSize, fill="white", outline="gray", tag="box")
 
             text = canvas.create_text(row * boxSize + (boxSize / 2), col * boxSize + (
                 boxSize / 2), font=("Times new roman", 22), text="", tag="box")
 
-            box = Box(-1, row, col)
+            box = Box(0, row, col)
             boxes.append(box)
-
-            
 
     canvas.tag_bind("box", "<Button-1>", boxClicked)
 
@@ -65,26 +89,10 @@ def setupWindow():
     canvas.create_line(0, boxSize * 3, cWidth, boxSize * 3, width="2")
     canvas.create_line(0, boxSize * 6, cWidth, boxSize * 6, width="2")
 
-    fillStartingNumber()
-    
+    createPuzzleArray()
 
     win.mainloop()
 
-def setupInputWindow():
-    global window
-
-    window = Tk()
-
-    canvas = Canvas(window, width=cWidth, height=cHeight)
-    canvas.pack()
-
-            
-
-
-
-
-
 
 if __name__ == "__main__":
-    # setupInputWindow()
     setupWindow()
