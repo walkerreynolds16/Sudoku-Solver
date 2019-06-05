@@ -10,6 +10,7 @@ cHeight = 450
 boxSize = 50
 
 boxes = []
+puzzleArray = []
 
 
 def findBoxByCoords(row, col):
@@ -50,14 +51,41 @@ def boxClicked(event):
 
 
 def createPuzzleArray():
+    global puzzleArray
     arr = [[0 for x in range(9)] for y in range(9)]
 
     for i in range(9):
         for k in range(9):
             arr[k][i] = boxes[(i * 9) + k].num
 
-    Solver.printArray(arr)
+    puzzleArray = arr
 
+    # Solver.printArray(arr)
+
+
+def redrawPuzzle():
+    for i in range(9):
+        for k in range(9):
+            box = boxes[(i * 9) + k]
+            box.num = puzzleArray[i][k]
+            canvas.itemconfig((((k * 9) + i) + 1) * 2, text=str(puzzleArray[i][k]))
+
+
+
+def startSolver():
+    global puzzleArray
+    puzzleArray = Solver.solve(puzzleArray)
+
+    redrawPuzzle()
+
+def clearPuzzle():
+    for i in range(9):
+        for k in range(9):
+            box = boxes[(i * 9) + k]
+            box.num = 0
+            canvas.itemconfig((((k * 9) + i) + 1) * 2, text="")
+
+    createPuzzleArray()
 
 def setupWindow():
     global canvas, boxes, window
@@ -88,6 +116,18 @@ def setupWindow():
     canvas.create_line(boxSize * 6, 0, boxSize * 6, cHeight, width="2")
     canvas.create_line(0, boxSize * 3, cWidth, boxSize * 3, width="2")
     canvas.create_line(0, boxSize * 6, cWidth, boxSize * 6, width="2")
+
+    separator = Frame(height=2, bd=1, relief=SUNKEN)
+    separator.pack(fill=X, padx=5, pady=5)
+
+    buttonFrame = Frame()
+    buttonFrame.pack()
+
+    startButton = Button(buttonFrame, text="Start Solving", command=startSolver)
+    startButton.pack(side=LEFT, anchor=W, padx=20)
+
+    clearButton = Button(buttonFrame, text="Clear Puzzle", command=clearPuzzle)
+    clearButton.pack(side=LEFT, anchor=E, padx=20)
 
     createPuzzleArray()
 

@@ -1,30 +1,34 @@
-arr = [[1, 5, 9, 7, 2, 0, 3, 0, 0],
-       [0, 6, 4, 0, 0, 3, 0, 2, 0],
-       [0, 3, 0, 6, 0, 0, 8, 0, 9],
-       [0, 0, 0, 0, 8, 0, 0, 9, 1],
-       [0, 0, 0, 4, 0, 2, 0, 0, 0],
-       [4, 9, 0, 0, 3, 0, 0, 0, 0],
-       [3, 0, 5, 0, 0, 1, 0, 7, 0],
-       [0, 1, 0, 3, 0, 0, 2, 5, 0],
-       [0, 0, 7, 0, 5, 4, 1, 6, 3]]
+# arr = [[1, 5, 9, 7, 2, 0, 3, 0, 0],
+#        [0, 6, 4, 0, 0, 3, 0, 2, 0],
+#        [0, 3, 0, 6, 0, 0, 8, 0, 9],
+#        [0, 0, 0, 0, 8, 0, 0, 9, 1],
+#        [0, 0, 0, 4, 0, 2, 0, 0, 0],
+#        [4, 9, 0, 0, 3, 0, 0, 0, 0],
+#        [3, 0, 5, 0, 0, 1, 0, 7, 0],
+#        [0, 1, 0, 3, 0, 0, 2, 5, 0],
+#        [0, 0, 7, 0, 5, 4, 1, 6, 3]]
 
-originalValues = [[False for x in range(9)] for y in range(9)]
+puzzleArray = []
 
 
-def solve():
-    fillOriginalValues()
 
-    # print(findNextEmptyBox(0,0))
+def solve(inputArr):
+    global puzzleArray
+    puzzleArray = inputArr
+
+    
 
     backtrackingHelper(0, 0)
 
-    printArray(arr)
+    printArray(puzzleArray)
+
+    return puzzleArray
 
 
 def findNextEmptyBox(row, col):
     for i in range(0, 9):
         for k in range(0, 9):
-            if(arr[i][k] == 0):
+            if(puzzleArray[i][k] == 0):
                 return (i, k)
 
     return (-1, -1)
@@ -42,14 +46,14 @@ def backtrackingHelper(row, col):
     col = nextCord[1]
 
     for num in range(1, 10):
-        arr[row][col] = num
+        puzzleArray[row][col] = num
 
         if(isValid(row, col)):
             if(backtrackingHelper(row, col)):
                 # print('backtracking return true')
                 return True
 
-        arr[row][col] = 0
+        puzzleArray[row][col] = 0
 
     # print("return false")
     return False
@@ -89,19 +93,19 @@ def isValid(row, col):
 
     # Validate row
     for i in range(9):
-        if(arr[row][i] != 0 and arr[row][i] in usedNums):
+        if(puzzleArray[row][i] != 0 and puzzleArray[row][i] in usedNums):
             return False
         else:
-            usedNums.append(arr[row][i])
+            usedNums.append(puzzleArray[row][i])
 
     usedNums.clear()
 
     # Validate col
     for i in range(9):
-        if(arr[i][col] != 0 and arr[i][col] in usedNums):
+        if(puzzleArray[i][col] != 0 and puzzleArray[i][col] in usedNums):
             return False
         else:
-            usedNums.append(arr[i][col])
+            usedNums.append(puzzleArray[i][col])
 
     # Validate subgrid
     return validateSubgrid(subgrid)
@@ -113,39 +117,39 @@ def getSubgrid(subgrid):
     if(subgrid == 1):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i][k]
+                grid[i][k] = puzzleArray[i][k]
     elif(subgrid == 2):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i][k+3]
+                grid[i][k] = puzzleArray[i][k+3]
     elif(subgrid == 3):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i][k+6]
+                grid[i][k] = puzzleArray[i][k+6]
     elif(subgrid == 4):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+3][k]
+                grid[i][k] = puzzleArray[i+3][k]
     elif(subgrid == 5):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+3][k+3]
+                grid[i][k] = puzzleArray[i+3][k+3]
     elif(subgrid == 6):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+3][k+6]
+                grid[i][k] = puzzleArray[i+3][k+6]
     elif(subgrid == 7):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+6][k]
+                grid[i][k] = puzzleArray[i+6][k]
     elif(subgrid == 8):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+6][k+3]
+                grid[i][k] = puzzleArray[i+6][k+3]
     elif(subgrid == 9):
         for i in range(0, 3):
             for k in range(0, 3):
-                grid[i][k] = arr[i+6][k+6]
+                grid[i][k] = puzzleArray[i+6][k+6]
 
     return grid
 
@@ -163,16 +167,6 @@ def validateSubgrid(subgrid):
     return True
 
 
-def fillOriginalValues():
-    global originalValues
-
-    for i in range(0, 9):
-        for k in range(0, 9):
-            if(arr[i][k] != 0):
-                originalValues[i][k] = True
-            else:
-                originalValues[i][k] = False
-
 
 def printArray(arr):
     for i in range(0, 9):
@@ -180,6 +174,3 @@ def printArray(arr):
             print(str(arr[i][k]) + " ", end="")
         print()
 
-
-if __name__ == "__main__":
-    solve()
